@@ -1,6 +1,7 @@
 package by.training.compositetatext.parser;
 
 import by.training.compositetatext.entity.impl.TextComposite;
+import by.training.compositetatext.exception.TextComponentException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +20,7 @@ public abstract class AbstractParser {
         return handler;
     }
 
-    public abstract void parse(TextComposite composite, String part);
+    public abstract void parse(TextComposite composite, String part) throws TextComponentException;
 
     private static class DefaultParser extends AbstractParser{
 
