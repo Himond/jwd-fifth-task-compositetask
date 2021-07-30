@@ -1,15 +1,15 @@
-package by.training.compositetatext.entity.impl;
+package by.training.compositetatext.entity;
 
-import by.training.compositetatext.entity.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Letter implements TextComponent {
+public class Punctuation extends TextComponent {
 
     private static Logger logger = LogManager.getLogger();
     private char ch;
 
-    public Letter(char ch){
+    public Punctuation(char ch) {
+        super(TextComponentIndent.PUNCTUATION);
         this.ch = ch;
     }
 
@@ -23,13 +23,13 @@ public class Letter implements TextComponent {
 
     @Override
     public boolean add(TextComponent component) {
-        logger.info("prohibited operation to add a component to letter");
+        logger.info("prohibited operation to add a component to punctuation");
         throw new UnsupportedOperationException("add impossible");
     }
 
     @Override
     public boolean remove(TextComponent component) {
-        logger.info("prohibited operation to remove a component to letter");
+        logger.info("prohibited operation to remove a component to punctuation");
         throw new UnsupportedOperationException("remove impossible");
     }
 
@@ -43,9 +43,9 @@ public class Letter implements TextComponent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Letter letter = (Letter) o;
+        Punctuation that = (Punctuation) o;
 
-        return ch == letter.ch;
+        return ch == that.ch;
     }
 
     @Override

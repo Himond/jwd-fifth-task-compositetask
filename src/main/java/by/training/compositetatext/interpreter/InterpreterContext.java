@@ -7,7 +7,7 @@ import by.training.compositetatext.interpreter.expression.impl.OperationExpressi
 
 import java.util.*;
 
-public class TextInterpreterContext {
+public class InterpreterContext {
 
     private static final String OPENING_PARENTHESIS = "(";
     private static final String CLOSING_PARENTHESIS = ")";
@@ -30,39 +30,29 @@ public class TextInterpreterContext {
         while (!openParenthesis.isEmpty()){
             List<String> partOfExpression;
             int start = openParenthesis.pop();
-
             for (int j = start + 1; j < array.size(); j++){
                 if (array.get(j).equals(CLOSING_PARENTHESIS)){
                     closeParenthesis.offer(j);
                     break;
                 }
             }
-
             partOfExpression = new ArrayList<>(array.subList(start + 1, closeParenthesis.peek()));
-
             if (closeParenthesis.peek() >= start) {
                 array.subList(start, closeParenthesis.poll() + 1).clear();
             }
-
             int number = calculate(partOfExpression);
             array.add(start, Integer.toString(number));
-
         }
-
         return calculate(array);
 
     }
 
     private int calculate(List<String> expression) throws TextComponentException {
-
         Deque<AbstractExpression> polishNotationDeque = toReversePolishNotation(expression);
         AbstractExpression syntaxTree = buildExpressionTree(polishNotationDeque);
-
         return syntaxTree.interpret();
 
     }
-
-
 
     private AbstractExpression buildExpressionTree(Deque<AbstractExpression> expressions) {
         Deque<AbstractExpression> bufferDeque = new ArrayDeque<>();
@@ -88,15 +78,15 @@ public class TextInterpreterContext {
 
     private Deque<AbstractExpression> toReversePolishNotation(List<String> tokens) throws TextComponentException {
         Deque<AbstractExpression> result = new ArrayDeque<>();
-        Deque<OperationType> operationBuffer = new ArrayDeque<>();
+        Deque<ExpressionType> operationBuffer = new ArrayDeque<>();
 
         for (String token : tokens) {
-            if (OperationType.contains(token)) {
-                OperationType operationType = OperationType.findByValue(token);
+            if (ExpressionType.contains(token)) {
+                ExpressionType operationType = ExpressionType.findByValue(token);
                 int operationPriority = operationType.getPriority();
 
                 while (!operationBuffer.isEmpty() && operationBuffer.peekLast().getPriority() >= operationPriority) {
-                    OperationType poppedOperation = operationBuffer.removeLast();
+                    ExpressionType poppedOperation = operationBuffer.removeLast();
                     AbstractExpression operationExpression = new OperationExpression(poppedOperation);
                     result.add(operationExpression);
                 }
@@ -114,7 +104,7 @@ public class TextInterpreterContext {
         }
 
         while (!operationBuffer.isEmpty()) {
-            OperationType operationType = operationBuffer.removeLast();
+            ExpressionType operationType = operationBuffer.removeLast();
             AbstractExpression operationExpression = new OperationExpression(operationType);
             result.add(operationExpression);
         }

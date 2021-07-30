@@ -1,6 +1,6 @@
 package by.training.compositetatext.parser;
 
-import by.training.compositetatext.entity.impl.TextComposite;
+import by.training.compositetatext.entity.TextComposite;
 import by.training.compositetatext.exception.TextComponentException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

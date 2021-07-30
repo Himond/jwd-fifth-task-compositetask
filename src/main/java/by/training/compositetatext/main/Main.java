@@ -1,20 +1,28 @@
 package by.training.compositetatext.main;
 
-import by.training.compositetatext.entity.impl.TextComposite;
+import by.training.compositetatext.entity.TextComponentIndent;
+import by.training.compositetatext.entity.TextComposite;
 import by.training.compositetatext.exception.TextComponentException;
 import by.training.compositetatext.parser.ParagraphParser;
+import by.training.compositetatext.reader.Impl.ReaderServiceImpl;
+import by.training.compositetatext.reader.ReaderService;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class Main {
-    public static void main(String[] args) throws TextComponentException {
+    public static void main(String[] args) throws TextComponentException, IOException {
 
-        String text = """
-    It has survived - not only (five) centuries, but also the leap into 13<<2 electronic typesetting, remaining essentially ~6&9|(3&4) unchanged. It was popularised in the 5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1) with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using (~71&(2&3|(3|(2&1>>2|2)&2)|10&2))|78 Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using (Content here), content here', making it look like readable English.
-    It is a (7^5|1&2<<(2|5>>2&71))|1200 established fact that a reader will be of a page when looking at its layout.
-    Bye.""";
+        ClassLoader classLoader = Main.class.getClassLoader();
+        URL resource = classLoader.getResource("data/text.txt");
+        assert resource != null;
+        String absolutePath = new File(resource.getFile()).getAbsolutePath();
+        ReaderService service = new ReaderServiceImpl();
+
         ParagraphParser parser = new ParagraphParser();
-        TextComposite composite = new TextComposite();
-        parser.parse(composite, text);
+        TextComposite composite = new TextComposite(TextComponentIndent.TEXT);
+        parser.parse(composite, service.read(absolutePath));
 
         System.out.println(composite);
 

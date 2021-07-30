@@ -7,7 +7,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public enum OperationType implements BiFunction<AbstractExpression, AbstractExpression, Integer> {
+public enum ExpressionType implements BiFunction<AbstractExpression, AbstractExpression, Integer> {
+
+    OR("|", 1) {
+        @Override
+        public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
+            return firstOperand.interpret() | secondOperand.interpret();
+        }
+    },
+
+    XOR("^", 2) {
+        @Override
+        public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
+            return firstOperand.interpret() ^ secondOperand.interpret();
+        }
+    },
 
     AND("&", 3) {
         @Override
@@ -15,24 +29,7 @@ public enum OperationType implements BiFunction<AbstractExpression, AbstractExpr
             return firstOperand.interpret() & secondOperand.interpret();
         }
     },
-    UNARY_NAG("~", 5) {
-        @Override
-        public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
-            return ~secondOperand.interpret();
-        }
-    },
-    OR("|", 1) {
-        @Override
-        public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
-            return firstOperand.interpret() | secondOperand.interpret();
-        }
-    },
-    XOR("^", 2) {
-        @Override
-        public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
-            return firstOperand.interpret() ^ secondOperand.interpret();
-        }
-    },
+
     RIGHT_SHIFT(">>", 4) {
         @Override
         public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
@@ -45,27 +42,34 @@ public enum OperationType implements BiFunction<AbstractExpression, AbstractExpr
             return firstOperand.interpret() >>> secondOperand.interpret();
         }
     },
+
     LEFT_SHIFT("<<", 4) {
         @Override
         public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
             return firstOperand.interpret() << secondOperand.interpret();
         }
+    },
+
+    UNARY_NAG("~", 5) {
+        @Override
+        public Integer apply(AbstractExpression firstOperand, AbstractExpression secondOperand) {
+            return ~secondOperand.interpret();
+        }
     };
 
-    private static final Map<String, OperationType> nameToEnumMap;
+    private static final Map<String, ExpressionType> nameToEnumMap;
 
     private final String value;
     private final int priority;
 
     static {
         nameToEnumMap = new HashMap<>();
-
-        for (OperationType item : values()) {
+        for (ExpressionType item : values()) {
             nameToEnumMap.put(item.value, item);
         }
     }
 
-    OperationType(String value, int priority) {
+    ExpressionType(String value, int priority) {
         this.value = value;
         this.priority = priority;
     }
@@ -78,13 +82,13 @@ public enum OperationType implements BiFunction<AbstractExpression, AbstractExpr
         return priority;
     }
 
-    public static OperationType findByValue(String value) {
+    public static ExpressionType findByValue(String value) {
         return nameToEnumMap.get(value);
     }
 
     public static boolean contains(String testString) {
         return Arrays.stream(values())
-                .map(OperationType::getValue)
+                .map(ExpressionType::getValue)
                 .anyMatch(value -> value.equals(testString));
     }
 }

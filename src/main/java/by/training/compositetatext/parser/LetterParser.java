@@ -1,8 +1,8 @@
 package by.training.compositetatext.parser;
 
 import by.training.compositetatext.entity.TextComponent;
-import by.training.compositetatext.entity.impl.Letter;
-import by.training.compositetatext.entity.impl.TextComposite;
+import by.training.compositetatext.entity.Letter;
+import by.training.compositetatext.entity.TextComposite;
 
 import java.util.ArrayList;
 import java.util.List;
