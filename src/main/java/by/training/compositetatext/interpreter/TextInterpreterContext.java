@@ -5,26 +5,62 @@ import by.training.compositetatext.interpreter.expression.AbstractExpression;
 import by.training.compositetatext.interpreter.expression.impl.NumberExpression;
 import by.training.compositetatext.interpreter.expression.impl.OperationExpression;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class TextInterpreterContext {
+
+    private static final String OPENING_PARENTHESIS = "(";
+    private static final String CLOSING_PARENTHESIS = ")";
     private static final String EXPRESSION_DELIMITER_REGEX =
             "(?<=\\d)(?=[&|^><])|(?<=[&|^><])(?=\\d)|(?<=\\()|(?<=\\))|(?=\\))|(?=\\()|(?<=\\~)";
 
 
     public int evaluate(String stringExpression) throws TextComponentException {
-        String[] tokens = stringExpression.split(EXPRESSION_DELIMITER_REGEX);
-        Deque<AbstractExpression> polishNotationDeque = toReversePolishNotation(tokens);
-        AbstractExpression syntaxTree = buildExpressionTree(polishNotationDeque);
-        return syntaxTree.interpret();
 
+        List<String> array = new ArrayList(Arrays.asList(stringExpression.split(EXPRESSION_DELIMITER_REGEX)));
+        Deque<Integer> openParenthesis = new ArrayDeque<>();
+        Deque<Integer> closeParenthesis = new ArrayDeque<>();
 
+        for(int i = 0; i < array.size(); i++){
+            if (array.get(i).equals(OPENING_PARENTHESIS)){
+                openParenthesis.push(i);
+            }
+        }
+
+        while (!openParenthesis.isEmpty()){
+            List<String> partOfExpression;
+            int start = openParenthesis.pop();
+
+            for (int j = start + 1; j < array.size(); j++){
+                if (array.get(j).equals(CLOSING_PARENTHESIS)){
+                    closeParenthesis.offer(j);
+                    break;
+                }
+            }
+
+            partOfExpression = new ArrayList<>(array.subList(start + 1, closeParenthesis.peek()));
+
+            if (closeParenthesis.peek() >= start) {
+                array.subList(start, closeParenthesis.poll() + 1).clear();
+            }
+
+            int number = calculate(partOfExpression);
+            array.add(start, Integer.toString(number));
+
+        }
+
+        return calculate(array);
 
     }
 
+    private int calculate(List<String> expression) throws TextComponentException {
 
+        Deque<AbstractExpression> polishNotationDeque = toReversePolishNotation(expression);
+        AbstractExpression syntaxTree = buildExpressionTree(polishNotationDeque);
+
+        return syntaxTree.interpret();
+
+    }
 
 
 
@@ -50,10 +86,7 @@ public class TextInterpreterContext {
         return bufferDeque.removeFirst();
     }
 
-    /**
-     * @return Iterable of expressions adjusted according to reverse polish notation
-     */
-    private Deque<AbstractExpression> toReversePolishNotation(String[] tokens) throws TextComponentException {
+    private Deque<AbstractExpression> toReversePolishNotation(List<String> tokens) throws TextComponentException {
         Deque<AbstractExpression> result = new ArrayDeque<>();
         Deque<OperationType> operationBuffer = new ArrayDeque<>();
 
