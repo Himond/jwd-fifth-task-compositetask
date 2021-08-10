@@ -23,7 +23,7 @@ public class CompositeParserTest {
 
     @BeforeClass
     public static void initTest()throws TextComponentException, IOException {
-        ClassLoader classLoader = CompositeServiceTest.class.getClassLoader();
+        ClassLoader classLoader = CompositeParserTest.class.getClassLoader();
         URL resource = classLoader.getResource("data/test.txt");
         assert resource != null;
         String absolutePath = new File(resource.getFile()).getAbsolutePath();
@@ -33,7 +33,7 @@ public class CompositeParserTest {
     @Test
     public void testParserText() throws TextComponentException, IOException {
         String actualText = composite.toString();
-        ClassLoader classLoader = CompositeServiceTest.class.getClassLoader();
+        ClassLoader classLoader = CompositeParserTest.class.getClassLoader();
         URL resource = classLoader.getResource("data/expect.txt");
         assert resource != null;
         String testPath = new File(resource.getFile()).getAbsolutePath();
